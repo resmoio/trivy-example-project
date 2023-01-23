@@ -17,6 +17,10 @@ a [Trivy integration](https://docs.resmo.com/product/integrations/trivy-integrat
 
 ```shell
 $ minikube start
+
+$ CUSTOMER_DOMAIN="acme"
+$ INGEST_KEY="7c3d9dbe-48ec-411a-92ff-f159cf2f1473" # Available on the Resmo UI in Trivy Integration
+$ COMPONENT="trivy-example-project"
 ```
 
 # Step 1
@@ -32,18 +36,12 @@ $ kubectl apply -f manifest.yml
 
 // Generate a SBOM in the Cyclonedx format of the resulting image with Trivy, and upload it to Resmo
 $ trivy image --format cyclonedx $(cat imgId1) > step1.json
-
-$ CUSTOMER_DOMAIN="acme"
-$ INGEST_KEY="7c3d9dbe-48ec-411a-92ff-f159cf2f1473" # Available on the Resmo UI in Trivy Integration
-$ COMPONENT="trivy-example-project"
-
 $ curl --request POST \
   --compressed \
   --url "https://${CUSTOMER_DOMAIN}.resmo.app/integration/trivy/event?componentName=${COMPONENT}" \
   --header 'Content-Type: application/json' \
   --header "X-Ingest-Key: ${INGEST_KEY}" \
   --data "@step1.json"
-  
 ```
 
 By doing so, we build a vulnerable image, deployed it to our cluster. Also, we've created a SBOM file using Trivy
