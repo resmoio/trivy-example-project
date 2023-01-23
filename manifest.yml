@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: demo-app
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: demo-app
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: view
+subjects:
+  - kind: ServiceAccount
+    name: demo-app
+    namespace: default
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pod-watcher
+  labels:
+    app: pod-watcher
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: pod-watcher
+  template:
+    metadata:
+      labels:
+        app: pod-watcher
+    spec:
+      serviceAccountName: demo-app
+      containers:
+        - name: pod-watcher
+          image: pod-watcher:1.0
+          imagePullPolicy: IfNotPresent
