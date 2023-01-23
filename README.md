@@ -16,8 +16,11 @@ a [Kubernetes integration](https://docs.resmo.com/product/integrations/kubernete
 a [Trivy integration](https://docs.resmo.com/product/integrations/trivy-integration)
 
 ```shell
+# Setup minikube and push images directly to it.
 $ minikube start
+$ eval $(minkube docker-env)
 
+# Setup variables
 $ CUSTOMER_DOMAIN="acme"
 $ INGEST_KEY="7c3d9dbe-48ec-411a-92ff-f159cf2f1473" # Available on the Resmo UI in Trivy Integration
 $ COMPONENT="trivy-example-project"
@@ -29,7 +32,6 @@ The Go library `client-go` and `gcr.io/distroless/base-debian9` is vulnerable. W
 add the changes
 
 ```shell
-$ eval $(minkube docker-env)
 // Build the image and write the Image ID to file $(imgId1) and deploy to Kubernetes cluster
 $ docker build --iidfile=imgId1 -t "pod-watcher:1.0" .
 $ kubectl apply -f manifest.yml
@@ -77,7 +79,6 @@ require (
 Now we need to rebuild the Docker image, executing the same commands as above with slight difference on filenames.
 
 ```shell
-$ eval $(minkube docker-env)
 // Build the new image and label the container as pod-watcher:1.1
 $ docker build --iidfile=imgId2 -t "pod-watcher:1.1" .
 $ kubectl apply -f manifest.yml
